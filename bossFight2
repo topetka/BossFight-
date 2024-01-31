@@ -1,0 +1,119 @@
+using System;
+
+namespace BossFight
+{
+    internal class Program
+    {
+        static void Main()
+        {
+            const int UserSpellLightingCommand = 1;
+            const int UserSpellHeartStopCommand = 2;
+            const int UserSpellMoonCoverCommand = 3;
+            const int UserSpellHolyGrenadeCommand = 4;
+
+            float bossHP = 1000f;
+            float bossAttackDamage = 37f;
+            float bossSpellRegeneration = 750f;
+            float bossRegerationTrigger = 200f;
+            float bossCountSpellRegeneration = 1;
+            float bossCritDamage = 79f;
+
+            float playerHP = 250f;
+            float playerSpellLightingDmg = 344f;
+            float playerSpellHeartStopDmg = 270f;
+            float playerSpellMoonCoverHeal = 110f;
+            float playerSpellHolyGrenadeDmg = 550f;
+
+            int countPlayerLightingSpellUse = 0;
+            int countPlayerMoonCoverUse = 0;
+            int countPlayerHeartStopUse = 0;
+            int countPlayerHolyGrenadeUse = 0;
+            int userInput;
+
+            Console.WriteLine("Вы идёте по тёмному лесу, ваши свитки хранятся в сумке\n" +
+                "вы видите на поляне противника и он замечает вас, вы понимаете, что босс ранен и способен только контратаковать, " +
+                "нажмите любую клавишу что бы продолжить...");
+            Console.ReadKey();
+
+            while (bossHP > 0 && playerHP > 0)
+            {
+                Console.WriteLine();
+
+                if (bossHP <= bossRegerationTrigger && bossCountSpellRegeneration > 0)
+                {
+                    Console.WriteLine("Вы сильно ранили босса! Он восстановил здоровье в количестве: " + bossSpellRegeneration);
+                    bossHP += bossSpellRegeneration;
+                    bossCountSpellRegeneration--;
+                }
+
+                Console.WriteLine($"Ваше здоровье {playerHP}, здоровье босса {bossHP}");
+                Console.WriteLine("перед вами разворачивается поле боя, босс хрипит от ран, инициатива за вами, действуйте!");
+                Console.WriteLine($"{UserSpellLightingCommand} - что бы использовать удар молнией  \n " +
+                    $"{UserSpellHeartStopCommand} - что бы устроить сердечный приступ для противника \n" +
+                    $"{UserSpellMoonCoverCommand} - что бы укрыться в тенях луны и восстановить здоровье\n" +
+                    $"{UserSpellHolyGrenadeCommand} - Что бы кинуть святую гранату используйте ");
+
+                userInput = Convert.ToInt32(Console.ReadLine());
+
+                switch (userInput)
+                {
+                    case UserSpellLightingCommand:
+                        Console.WriteLine("Вы словно Тор взмываете в небо и бьёте молнией нанося " + playerSpellLightingDmg + " урона!");
+                        bossHP -= playerSpellLightingDmg;
+                        Console.WriteLine($"вы оставили Боссу {bossHP} здоровья, он зол и атакует вас на {bossAttackDamage}");
+                        playerHP -= bossAttackDamage;
+                        countPlayerLightingSpellUse++;
+                        break;
+
+                    case UserSpellHeartStopCommand:
+                        Console.WriteLine($"Вы щёлкаете пальцами и аорта босса сжимается, по его крикам вы понимаете, " +
+                            $"что отняли у него {playerSpellHeartStopDmg} здоровья");
+                        bossHP -= playerSpellHeartStopDmg;
+                        Console.WriteLine($"махая мечом наотмашь Босс сильно размахивает мечом и случайно сильно задевает вас" +
+                            $" нанося критический удар в размере: {bossCritDamage}");
+                        playerHP -= bossCritDamage;
+                        countPlayerHeartStopUse++;
+                        break;
+
+                    case UserSpellMoonCoverCommand:
+                        Console.WriteLine($"Вы кроетесь в тенях луны, заряжая святую гранату и восстанавливая {playerSpellMoonCoverHeal} здоровья" +
+                            $"тем временем босс бесится в пустую");
+                        playerHP += playerSpellMoonCoverHeal;
+                        countPlayerMoonCoverUse++;
+                        break;
+
+                    case UserSpellHolyGrenadeCommand:
+
+                        if (countPlayerMoonCoverUse > 0)
+                        {
+                            Console.WriteLine("Вы закидываете боссу гранату буквально под ноги, нанося огромный урон в количестве:" + playerSpellHolyGrenadeDmg);
+                            bossHP -= playerSpellHolyGrenadeDmg;
+                            Console.WriteLine("Находясь в шоковом состоянии Босс всё таки смог нанести вам урон в количестве: " + bossAttackDamage);
+                            playerHP -= bossAttackDamage;
+                            countPlayerHolyGrenadeUse++;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"вот чёрт, граната оказалась не заряжена!! Босс воспользовался ситуацией пока вы замешкались " +
+                                $" и нанёс {bossCritDamage}");
+                            playerHP -= bossCritDamage;
+                        }
+                        break;
+                }
+            }
+
+            if (playerHP < 1)
+            {
+                Console.WriteLine("\n Ваше тело слабеет. Вы падаете на пол. Босс выйграл");
+            }
+            else if (bossHP < 1)
+            {
+                Console.WriteLine("\n Босс роняет меч и истошно кричит, но вы уже  роетесь в его сумке, победа!");
+            }
+            else  
+            {
+                Console.WriteLine("\n Я не знаю как так случилось, но они уже лежали тут вдвоём в обнимку, таков был слоган новой газеты");
+            }
+        }
+    }
+}
